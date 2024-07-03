@@ -89,26 +89,28 @@ public class StudentController extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/student");
     }
 
-    private static void createStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private static void createStudent(HttpServletRequest req, HttpServletResponse resp) throws ServletException,  IOException{
         String name = req.getParameter("name");
         String address = req.getParameter("address");
         Float point = null;
-        if(req.getParameter("points") != null) {
+        if(req.getParameter("point") != null) {
             try {
                 point = Float.parseFloat(req.getParameter("point"));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
+                req.setAttribute("error", "Invalid point format");
+                req.getRequestDispatcher("/student/create.jsp").forward(req, resp);
+                return;
             }
         }
         if (name != null && address != null && point != null) {
             Student student = new Student(name, address, point);
             studentService.save(student);
-            System.out.println("save student");
+            resp.sendRedirect(req.getContextPath() + "/student");
         } else {
             req.setAttribute("error", "Please enter all the details");
+            req.getRequestDispatcher("/student/create.jsp").forward(req, resp);
         }
-        resp.sendRedirect("/student");
-
     }
 
     private void editShowForm(HttpServletRequest req, HttpServletResponse resp) {

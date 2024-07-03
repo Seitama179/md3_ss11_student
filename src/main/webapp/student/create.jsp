@@ -15,6 +15,7 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Trang chủ</a>
@@ -32,7 +33,7 @@
     </div>
 </nav>
 <div class="container">
-    <form action="/student" method="post">
+    <form action="/student?action=create" method="post">
         <div class="mb-3">
             <label for="name" class="form-label">Họ và tên</label>
             <input type="text" class="form-control" id="name" name="name" required maxlength="100" minlength="1">
@@ -47,6 +48,11 @@
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <div style="color: red;">
+        <c:if test="${not empty error}">
+            ${error}
+        </c:if>
+    </div>
 </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

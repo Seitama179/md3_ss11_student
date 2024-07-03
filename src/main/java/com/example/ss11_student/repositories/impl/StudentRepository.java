@@ -26,7 +26,7 @@ public class StudentRepository implements IStudentRepository {
     public List<Student> findAll() {
         List<Student> students = new ArrayList<>();
         try{
-            PreparedStatement preparedStatement = BaseRepository.getConnection().prepareStatement("select * from students");
+            PreparedStatement preparedStatement = BaseRepository.getConnection().prepareStatement("select s.id, s.name,s.address,s.point from students s");
             ResultSet resultSet = preparedStatement.executeQuery();
             Long id;
             String name;
