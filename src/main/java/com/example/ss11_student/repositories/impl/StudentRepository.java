@@ -6,7 +6,7 @@ import com.example.ss11_student.repositories.IStudentRepository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +49,12 @@ public class StudentRepository implements IStudentRepository {
     public void save(Student student) {
         try {
             PreparedStatement preparedStatement = BaseRepository.getConnection()
-                    .prepareStatement("INSERT INTO students (name, address, point) VALUES (?, ?, ?)");
+                    .prepareStatement("INSERT INTO students(name, address, point) VALUES (?, ?, ?)");
             preparedStatement.setString(1, student.getName());
             preparedStatement.setString(2, student.getAddress());
             preparedStatement.setFloat(3, student.getPoint());
             preparedStatement.executeUpdate();
+            System.out.println("Student added successfully");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -76,32 +77,56 @@ public class StudentRepository implements IStudentRepository {
     @Override
     public List<Student> findByName(String name) {
         List<Student> result = new ArrayList<>();
-        for (Student student : students) {
-            if (student.getName().equalsIgnoreCase(name)) {
-                result.add(student);
+        try {
+            PreparedStatement preparedStatement = BaseRepository.getConnection()
+                    .prepareStatement("SELECT * FROM students WHERE name LIKE ?");
+            preparedStatement.setString(1, "%" + name + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                String studentName = resultSet.getString("name");
+                String address = resultSet.getString("address");
+                Float point = resultSet.getFloat("point");
+                result.add(new Student(id, studentName, address, point));
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return result;
     }
 
     @Override
     public Student findById(Long id) {
-        for (Student student : students) {
-            if (student.getId().equals(id)) {
-                return student;
+        Student student = null;
+        try {
+            PreparedStatement preparedStatement = BaseRepository.getConnection()
+                    .prepareStatement("SELECT * FROM students WHERE id=?");
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String address = resultSet.getString("address");
+                Float point = resultSet.getFloat("point");
+                student = new Student(id, name, address, point);
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return null;
+        return student;
     }
 
     @Override
     public void update(Long id, Student student) {
-        for (Student student1 : students) {
-            if (student1.getId().equals(id)) {
-                student1.setName(student.getName());
-                student1.setAddress(student.getAddress());
-                student1.setPoint(student.getPoint());
-            }
+        try {
+            PreparedStatement preparedStatement = BaseRepository.getConnection()
+                    .prepareStatement("UPDATE students SET name=?, address=?, point=? WHERE id=?");
+            preparedStatement.setString(1, student.getName());
+            preparedStatement.setString(2, student.getAddress());
+            preparedStatement.setFloat(3, student.getPoint());
+            preparedStatement.setLong(4, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

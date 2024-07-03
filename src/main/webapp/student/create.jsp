@@ -32,19 +32,18 @@
     </div>
 </nav>
 <div class="container">
-    <form method="post">
+    <form action="/student" method="post">
         <div class="mb-3">
             <label for="name" class="form-label">Họ và tên</label>
-            <input type="text" class="form-control" id="name" name="name" required maxlength="100" minlength="5">
+            <input type="text" class="form-control" id="name" name="name" required maxlength="100" minlength="1">
         </div>
         <div class="mb-3">
             <label for="address" class="form-label">Địa chỉ</label>
             <input type="text" class="form-control" id="address" name="address" required>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="point">Điểm</label>
+            <label for="point" class="form-label">Điểm</label>
             <input type="number" class="form-control" id="point" name="point" min="0" max="10">
-
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

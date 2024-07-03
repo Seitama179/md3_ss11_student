@@ -28,6 +28,7 @@ public class StudentController extends HttpServlet {
         switch (action) {
             case "create":
                 req.getRequestDispatcher("/student/create.jsp").forward(req, resp);
+                break;
             case "edit":
                 editShowForm(req, resp);
                 break;
@@ -48,23 +49,11 @@ public class StudentController extends HttpServlet {
         }
         switch (action) {
             case "create":
-                String name = req.getParameter("name");
-                String address = req.getParameter("address");
-                Float points = Float.parseFloat(req.getParameter("point"));
-                Student student = new Student(name, address, points);
-                studentService.save(student);
-                resp.sendRedirect("/student");
+                createStudent(req, resp);
+                break;
             case "delete":
-                Long id = Long.parseLong(req.getParameter("id"));
-                Boolean isDelete = studentService.deleteById(id);
-                if(isDelete) {
-                    resp.sendRedirect("/student");
-                } else {
-                    req.setAttribute("message", "Xóa không thành công");
-                    List<Student> students = studentService.findAll();
-                    req.setAttribute("students", students);
-                    req.getRequestDispatcher("/student/list.jsp").forward(req, resp);
-                }
+                deleteStudent(req, resp);
+                break;
             case "search":
                 String search = req.getParameter("search");
                 List<Student> students = studentService.findByName(search);
@@ -73,7 +62,53 @@ public class StudentController extends HttpServlet {
                 break;
             case "edit":
                 updateStudent(req, resp);
+                break;
+            default:
+                resp.sendRedirect(req.getContextPath() + "/student");
+                break;
         }
+    }
+
+    private static void deleteStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Long id = null;
+        if(req.getParameter("id") != null) {
+            try {
+                id = Long.parseLong(req.getParameter("id"));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        if(id != null) {
+            Boolean isDelete = studentService.deleteById(id);
+            if(!isDelete) {
+                req.setAttribute("message", "Xóa không thành công.");
+            }
+        } else {
+            req.setAttribute("message", "ID không hợp lệ.");
+        }
+        resp.sendRedirect(req.getContextPath() + "/student");
+    }
+
+    private static void createStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String name = req.getParameter("name");
+        String address = req.getParameter("address");
+        Float point = null;
+        if(req.getParameter("points") != null) {
+            try {
+                point = Float.parseFloat(req.getParameter("point"));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        if (name != null && address != null && point != null) {
+            Student student = new Student(name, address, point);
+            studentService.save(student);
+            System.out.println("save student");
+        } else {
+            req.setAttribute("error", "Please enter all the details");
+        }
+        resp.sendRedirect("/student");
+
     }
 
     private void editShowForm(HttpServletRequest req, HttpServletResponse resp) {
