@@ -50,17 +50,17 @@
             <label class="form-label" for="classroom">Lớp học</label>
             <select name="classroom" id="classroom" class="form-select">
                 <c:forEach var="classroom" items="${classrooms}">
-                    <option value="${classrooms.idClass}">${classrooms.className}</option>
+                    <option value="${classroom.idClass}">${classroom.name}</option>
                 </c:forEach>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
-    <div style="color: red;">
-        <c:if test="${not empty error}">
-            ${error}
-        </c:if>
-    </div>
+<%--    <div style="color: red;">--%>
+<%--        <c:if test="${not empty error}">--%>
+<%--            ${error}--%>
+<%--        </c:if>--%>
+<%--    </div>--%>
 </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

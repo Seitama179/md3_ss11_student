@@ -34,6 +34,7 @@ public class StudentController extends HttpServlet {
         switch (action) {
             case "create":
                 List<Classroom> classrooms = classroomService.findAll();
+                req.setAttribute("classrooms", classrooms);
                 req.getRequestDispatcher("/student/create.jsp").forward(req, resp);
                 break;
             case "edit":
