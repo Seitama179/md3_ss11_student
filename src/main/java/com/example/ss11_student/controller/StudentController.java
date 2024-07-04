@@ -77,10 +77,9 @@ public class StudentController extends HttpServlet {
 
     private static void searchStudent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String search = req.getParameter("search");
-        List<Student> students = studentService.findByName(search);
+        List<StudentDTO> students = studentService.findByName(search);
         req.setAttribute("students", students);
         req.getRequestDispatcher("/student/list.jsp").forward(req, resp);
-        return;
     }
 
     private static void deleteStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {

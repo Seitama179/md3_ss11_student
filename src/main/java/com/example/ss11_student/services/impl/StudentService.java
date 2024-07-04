@@ -28,7 +28,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public List<Student> findByName(String name) {
+    public List<StudentDTO> findByName(String name) {
         return studentRepository.findByName(name);
     }
 

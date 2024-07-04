@@ -12,7 +12,7 @@ public interface IStudentRepository {
 
     Boolean deleteById(Long id);
 
-    List<Student> findByName(String name);
+    List<StudentDTO> findByName(String name);
 
     Student findById(Long id);
 

@@ -72,11 +72,12 @@ public class StudentRepository implements IStudentRepository {
     }
 
     @Override
-    public List<Student> findByName(String name) {
-        List<Student> result = new ArrayList<>();
+    public List<StudentDTO> findByName(String name) {
+        List<StudentDTO> result = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = BaseRepository.getConnection()
-                    .prepareStatement("SELECT * FROM students WHERE name LIKE ?");
+                    .prepareStatement("SELECT s.id, s.name, s.address, s.point, c.class_name " +
+                            "FROM students s JOIN classroom c ON s.id_class = c.id_class WHERE s.name LIKE ?");
             preparedStatement.setString(1, "%" + name + "%");
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -84,7 +85,8 @@ public class StudentRepository implements IStudentRepository {
                 String studentName = resultSet.getString("name");
                 String address = resultSet.getString("address");
                 Float point = resultSet.getFloat("point");
-                result.add(new Student(id, studentName, address, point));
+                String className = resultSet.getString("class_name");
+                result.add(new StudentDTO(id, studentName, address, point, className));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
