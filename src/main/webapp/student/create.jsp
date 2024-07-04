@@ -46,6 +46,14 @@
             <label for="point" class="form-label">Điểm</label>
             <input type="number" class="form-control" id="point" name="point" min="0" max="10">
         </div>
+        <div class="mb-3">
+            <label class="form-label" for="classroom">Lớp học</label>
+            <select name="classroom" id="classroom" class="form-select">
+                <c:forEach var="classroom" items="${classrooms}">
+                    <option value="${classrooms.idClass}">${classrooms.className}</option>
+                </c:forEach>
+            </select>
+        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <div style="color: red;">

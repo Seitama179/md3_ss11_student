@@ -1,5 +1,6 @@
 package com.example.ss11_student.services.impl;
 
+import com.example.ss11_student.dto.StudentDTO;
 import com.example.ss11_student.model.Student;
 import com.example.ss11_student.repositories.IStudentRepository;
 import com.example.ss11_student.repositories.impl.StudentRepository;
@@ -12,7 +13,7 @@ public class StudentService implements IStudentService {
     private static IStudentRepository studentRepository = new StudentRepository();
 
     @Override
-    public List<Student> findAll() {
+    public List<StudentDTO> findAll() {
         return studentRepository.findAll();
     }
 

@@ -1,8 +1,13 @@
 package com.example.ss11_student.controller;
 
+import com.example.ss11_student.dto.StudentDTO;
+import com.example.ss11_student.model.Classroom;
 import com.example.ss11_student.model.Student;
+import com.example.ss11_student.services.IClassroomService;
 import com.example.ss11_student.services.IStudentService;
+import com.example.ss11_student.services.impl.ClassroomService;
 import com.example.ss11_student.services.impl.StudentService;
+
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,6 +23,7 @@ public class StudentController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static IStudentService studentService = new StudentService();
+    private static final IClassroomService classroomService = new ClassroomService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -27,13 +33,14 @@ public class StudentController extends HttpServlet {
         }
         switch (action) {
             case "create":
+                List<Classroom> classrooms = classroomService.findAll();
                 req.getRequestDispatcher("/student/create.jsp").forward(req, resp);
                 break;
             case "edit":
                 editShowForm(req, resp);
                 break;
             default:
-                List<Student> students = studentService.findAll();
+                List<StudentDTO> students = studentService.findAll();
                 req.setAttribute("students", students);
                 req.getRequestDispatcher("/student/list.jsp").forward(req, resp);
                 break;
@@ -43,6 +50,7 @@ public class StudentController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
         if(action == null) {
             action = "";
@@ -55,10 +63,7 @@ public class StudentController extends HttpServlet {
                 deleteStudent(req, resp);
                 break;
             case "search":
-                String search = req.getParameter("search");
-                List<Student> students = studentService.findByName(search);
-                req.setAttribute("students", students);
-                req.getRequestDispatcher("/student/list.jsp").forward(req, resp);
+                searchStudent(req, resp);
                 break;
             case "edit":
                 updateStudent(req, resp);
@@ -67,6 +72,14 @@ public class StudentController extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/student");
                 break;
         }
+    }
+
+    private static void searchStudent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String search = req.getParameter("search");
+        List<Student> students = studentService.findByName(search);
+        req.setAttribute("students", students);
+        req.getRequestDispatcher("/student/list.jsp").forward(req, resp);
+        return;
     }
 
     private static void deleteStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -93,6 +106,7 @@ public class StudentController extends HttpServlet {
         String name = req.getParameter("name");
         String address = req.getParameter("address");
         Float point = null;
+        Long idClass = Long.valueOf(req.getParameter("classroom"));
         if(req.getParameter("point") != null) {
             try {
                 point = Float.parseFloat(req.getParameter("point"));
@@ -104,7 +118,7 @@ public class StudentController extends HttpServlet {
             }
         }
         if (name != null && address != null && point != null) {
-            Student student = new Student(name, address, point);
+            Student student = new Student(name, address, point, idClass);
             studentService.save(student);
             resp.sendRedirect(req.getContextPath() + "/student");
         } else {
@@ -116,8 +130,10 @@ public class StudentController extends HttpServlet {
     private void editShowForm(HttpServletRequest req, HttpServletResponse resp) {
         Long id = Long.parseLong(req.getParameter("id"));
         Student student = studentService.findById(id);
+        List<Classroom> classrooms = classroomService.findAll();
         RequestDispatcher dispatcher;
-        req.setAttribute("customer", student);
+        req.setAttribute("student", student);
+        req.setAttribute("classrooms", classrooms);
         dispatcher = req.getRequestDispatcher("student/edit.jsp");
         try {
             dispatcher.forward(req, resp);

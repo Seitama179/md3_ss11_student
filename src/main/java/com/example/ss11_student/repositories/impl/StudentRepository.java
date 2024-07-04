@@ -1,9 +1,9 @@
 package com.example.ss11_student.repositories.impl;
 
+import com.example.ss11_student.dto.StudentDTO;
 import com.example.ss11_student.model.Student;
 import com.example.ss11_student.repositories.IStudentRepository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,32 +12,28 @@ import java.util.List;
 
 public class StudentRepository implements IStudentRepository {
 
-    private static List<Student> students;
-
-//    static {
-//        students = new ArrayList<>();
-//        students.add(new Student(1L, "haiTT", "QN", 10.0f));
-//        students.add(new Student(2L, "Bảo Ngọc", "HN", 8.0f));
-//        students.add(new Student(3L, "Bảo Kỳ", "DN", 6.0f));
-//        students.add(new Student(5L, "Cook", "Bếp", 2f));
-//    }
+    private static List<com.example.ss11_student.dto.StudentDTO> studentsDTO = new ArrayList<>();
 
     @Override
-    public List<Student> findAll() {
-        List<Student> students = new ArrayList<>();
+    public List<StudentDTO> findAll() {
+        List<StudentDTO> students = new ArrayList<>();
         try{
-            PreparedStatement preparedStatement = BaseRepository.getConnection().prepareStatement("select s.id, s.name,s.address,s.point from students s");
+            PreparedStatement preparedStatement = BaseRepository.getConnection().prepareStatement("select s.id, s.name,s.address,s.point, c.class_name from students s " +
+                    "join classroom c on s.id_class = c.id_class");
             ResultSet resultSet = preparedStatement.executeQuery();
             Long id;
             String name;
             String address;
             Float point;
+            String className;
+
             while (resultSet.next()) {
                 id = resultSet.getLong("id");
                 name = resultSet.getString("name");
                 address = resultSet.getString("address");
                 point = resultSet.getFloat("point");
-                students.add(new Student(id, name, address, point));
+                className = resultSet.getString("class_name");
+                students.add(new StudentDTO(id, name, address, point, className));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -49,10 +45,11 @@ public class StudentRepository implements IStudentRepository {
     public void save(Student student) {
         try {
             PreparedStatement preparedStatement = BaseRepository.getConnection()
-                    .prepareStatement("INSERT INTO students(name, address, point) VALUES (?, ?, ?)");
+                    .prepareStatement("INSERT INTO students(name, address, point, id_class) VALUES (?, ?, ?, ?)");
             preparedStatement.setString(1, student.getName());
             preparedStatement.setString(2, student.getAddress());
             preparedStatement.setFloat(3, student.getPoint());
+            preparedStatement.setLong(4,student.getIdClass());
             preparedStatement.executeUpdate();
             System.out.println("Student added successfully");
         } catch (SQLException e) {

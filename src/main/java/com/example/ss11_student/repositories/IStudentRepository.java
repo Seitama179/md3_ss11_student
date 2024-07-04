@@ -1,11 +1,12 @@
 package com.example.ss11_student.repositories;
 
+import com.example.ss11_student.dto.StudentDTO;
 import com.example.ss11_student.model.Student;
 
 import java.util.List;
 
 public interface IStudentRepository {
-    List<Student> findAll();
+    List<StudentDTO> findAll();
 
     void save(Student student);
 
